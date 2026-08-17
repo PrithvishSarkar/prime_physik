@@ -3,7 +3,6 @@ import generateToken from "../../lib/generateToken.js";
 import packageToken from "../../lib/packageToken.js";
 import validateLogin from "../../lib/validateLogin.js";
 import fetchOnboardingStatus from "../../lib/fetchOnboardingStatus.js";
-import validateUserId from "../../lib/validateUserId.js";
 
 interface RequestBodyType {
   email: string;
