@@ -16,20 +16,24 @@ connectDB();
 const PORT = process.env.PORT || 4000;
 const app = express();
 
+// Render's Reverse Proxy
+app.set("trust proxy", 1);
+
 /* === Middleware Starts Here === */
-app.use(cookieParser());
-app.use(express.text());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "UPDATE", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+    maxAge: 86400,
+  }),
 );
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+app.use(cookieParser());
+app.use(express.text());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", profileRoutes);
 app.use("/api/v1", mainContentRoutes);
