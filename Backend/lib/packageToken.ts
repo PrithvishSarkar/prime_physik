@@ -8,7 +8,7 @@ const packageToken = (res: Response, token: string | undefined) => {
     maxAge: 7 * 24 * 3600 * 1000,
     httpOnly: true,
     secure: nodeEnvironment === "production",
-    sameSite: nodeEnvironment === "production" ? "none" : "lax",
+    sameSite: "lax", // Local and Vercel Only
   });
 };
 
