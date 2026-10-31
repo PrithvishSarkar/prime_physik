@@ -21,7 +21,7 @@
 - Security middleware with Helmet
 - CORS configuration
 - Auth-aware navigation
-- Guest and legit users seperation
+- Guest and authenticated user separation
 
 PrimePhysik heavily guards its application pages. Unauthenticated users cannot access protected functionality, while authenticated users cannot navigate back to authentication pages through URL manipulation alone.
 
@@ -136,6 +136,17 @@ This allows the user's training configuration to evolve as their fitness journey
 
 ---
 
+## 🔒 Password Requirements
+
+When registering or resetting a password, users must follow these rules:
+
+- Minimum **8 characters** without spaces
+- Must contain **uppercase** and **lowercase** letters
+- Must contain at least **one number**
+- Must contain at least **one special character**
+
+---
+
 ## 🧭 Application Pages
 
 ### Guest Users
@@ -209,50 +220,50 @@ The application's route protection and backend authorization work together so th
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Dependencies
 
 ### Frontend
 
-- **React.js**
-- **Vite**
-- **TypeScript**
-- **ShadCN UI**
-- **Tailwind CSS**
-- **Redux Toolkit**
-- **React Router**
-- **Lucide React**
-- **Recharts**
+| Technology / Package | Version | Purpose |
+| --- | --- | --- |
+| **React** | `^19.2.0` | UI Library |
+| **React DOM** | `^19.2.0` | DOM Renderer for React |
+| **Vite** | `^7.2.4` | Build tool |
+| **TypeScript** | `~5.9.3` | Type safety |
+| **React Router** | `^7.11.0` | Client-side routing |
+| **Redux Toolkit** | `^2.11.2` | State management |
+| **React-Redux** | `^9.2.0` | React bindings for Redux |
+| **Tailwind CSS** | `^4.1.18` | Utility-first CSS framework |
+| **@tailwindcss/vite** | `^4.1.18` | Vite plugin for Tailwind CSS v4 |
+| **Radix UI components** | `^1.3.3+` | Accessible primitive UI components |
+| **Lucide React** | `^0.563.0` | Icon set |
+| **Recharts** | `^3.8.1` | Analytics and performance charts |
+| **Sonner** | `^2.0.7` | Toast notification library |
+| **Next-Themes** | `^0.4.6` | Theme management |
 
-The frontend also uses dynamic imports with Suspense-based loaders and network loaders to improve the application's loading experience.
+> The frontend also uses dynamic imports with Suspense-based loaders and network loaders to improve the application's loading experience.
 
 ### Backend
 
-- **Node.js**
-- **Express.js**
-- **TypeScript**
-- **JSON Web Token**
-- **Bcrypt**
-- **Cookie Parser**
-- **CORS**
-- **Helmet**
-- **RBAC Authorization**
-- **MVC Architecture**
-- **Centralized Error Handling**
+| Technology / Package | Version | Purpose |
+| --- | --- | --- |
+| **Node.js** | `>=24.0.0` | JavaScript Runtime |
+| **Express.js** | `^5.2.1` | Web framework |
+| **TypeScript** | `^5.9.3` | Type safety |
+| **Mongoose** | `^9.1.1` | MongoDB ODM |
+| **jsonwebtoken (JWT)** | `^9.0.3` | Authentication tokens |
+| **bcryptjs** | `^3.0.3` | Password hashing |
+| **cookie-parser** | `^1.4.7` | Cookie handling middleware |
+| **CORS** | `^2.8.5` | Cross-Origin Resource Sharing |
+| **Helmet** | `^8.1.0` | HTTP Security Headers |
+| **dotenv** | `^17.2.3` | Environment variable management |
+| **tsx** | `^4.21.0` | TypeScript Execution & Live reload watcher |
 
-### Database
-
-- **MongoDB**
-- **Mongoose ODM**
-- **CRUD operations**
-- **MongoDB Aggregation Pipeline**
-
----
+> Use MongoDB Atlas for NoSQL Database.
 
 ## 🏗️ Architecture
 
 PrimePhysik follows an MVC-oriented backend architecture.
-
-At a high level:
 
 ```text
 React + Vite Frontend
@@ -274,9 +285,7 @@ Mongoose ODM
 MongoDB Atlas
 ```
 
-The backend handles authentication, authorization, workout operations, user data, and analytical queries. MongoDB aggregation pipelines are used for dashboard-oriented calculations.
-
----
+> The backend handles authentication, authorization, workout operations, user data, and analytical queries. MongoDB aggregation pipelines are used for dashboard-oriented calculations.
 
 ## 🔒 Route & Access Protection
 
@@ -302,7 +311,27 @@ Authenticated + Onboarded
   └── Exercises
 ```
 
-The frontend uses API responses to determine authentication and onboarding state, while protected API resources are guarded by backend authentication and authorization mechanisms.
+> The frontend uses API responses to determine authentication and onboarding state, while protected API resources are guarded by backend authentication and authorization mechanisms.
+
+## 🌐 API Overview
+
+Protected routes require valid JWT cookie sessions.
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| **POST** | `/auth/register` | Register new user |
+| **POST** | `/auth/login` | Login existing user |
+| **POST** | `/auth/logout` | Logout (clears auth cookie) |
+| **GET** | `/auth/name-email` | Fetch user's basic details (name and email) |
+| **GET** | `/auth/verify-user` | Verify user authenticity & onboarding status |
+| **GET** | `/users/me` | Fetch logged-in user profile details |
+| **PUT** | `/users/me/:id` | Update user profile details |
+| **GET** | `/exercises` | Get exercise library |
+| **GET** | `/plans` | Get personalized workout plan |
+| **GET** | `/logs` | Get today's workout logs |
+| **POST** | `/logs` | Log a new exercise |
+| **GET** | `/logs/history` | Get complete workout history |
+| **GET** | `/dashboard` | Fetch performance analytics & dashboard metrics |
 
 ---
 
@@ -310,52 +339,93 @@ The frontend uses API responses to determine authentication and onboarding state
 
 ### Prerequisites
 
-Before running PrimePhysik locally, make sure you have:
+- **Node.js** (v24 or higher recommended)
+- **npm** (v10 or higher recommended)
+- **MongoDB** database (MongoDB Atlas)
 
-- Node.js installed
-- NPM or any other Node package manager
-- A MongoDB database / MongoDB Atlas cluster
-
-### Installation
-
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/PrithvishSarkar/prime_physik.git
 cd PrimePhysik
 ```
 
-Install the frontend dependencies:
-
-```bash
-cd Frontend
-npm install
-```
-
-Install the backend dependencies:
-
-```bash
-cd ../Backend
-npm install
-```
-
----
-
-## ▶️ Running the Application
-
-### Start the backend
+### 2. Backend Setup
 
 ```bash
 cd Backend
-npm run dev
+npm install
 ```
 
-### Start the frontend
+Create a `.env` file in the `Backend` directory:
+
+```env
+DB_CONNECTION_STRING=<your_mongodb_connection_string>
+JWT_SECRET_KEY=<your_secret_key>
+FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
+```
+
+Run the backend development server:
 
 ```bash
-cd Frotend
 npm run dev
 ```
+
+### 3. Frontend Setup
+
+```bash
+cd ../Frontend
+npm install
+```
+
+Create a `.env` file in the `Frontend` directory:
+
+```env
+VITE_BACKEND_URL=http://localhost:4000/api/v1
+VITE_LOGIN_PATH=/auth/login
+VITE_REGISTER_PATH=/auth/register
+VITE_LOGOUT_PATH=/auth/logout
+VITE_USER_BASIC_DETAILS_PATH=/auth/name-email
+VITE_VERIFY_USER_AUTHENTICITY=/auth/verify-user
+VITE_USER_PROFILE_PATH=/users/me
+VITE_EXERCISES_PATH=/exercises
+VITE_WORKOUT_PLAN_PATH=/plans
+VITE_LOG_WORKOUT_PATH=/logs
+VITE_WORKOUT_HISTORY_PATH=/logs/history
+VITE_DASHBOARD_PATH=/dashboard
+```
+
+Run the frontend development server:
+
+```bash
+npm run dev
+```
+
+> The application will be available at `http://localhost:5173`.
+
+---
+
+## 🚢 Deployment
+
+### Backend → Render
+
+1. Create a new **Web Service** on Render.
+2. Connect the GitHub repository.
+3. Set the root directory to `Backend`.
+4. Add all environment variables from the Backend's `.env` configuration
+5. Set Build Command: `npm install --include=dev && npm run build`
+6. Set Start Command: `npm start`
+
+### Frontend → Vercel
+
+1. Import the GitHub repository on Vercel
+2. Set the root directory to `Frontend`
+3. Framework Preset: **Vite**
+4. Add all environment variables listed in the Frotend's `.env` configuration
+5. Click **Deploy**
+
+> **Note:** After deployment, update `FRONTEND_URL` on Render's Environment Variables and `VITE_BACKEND_URL` on Vercel's Environment Variables.
 
 ---
 
@@ -363,9 +433,7 @@ npm run dev
 
 One of the key architectural aspects of PrimePhysik is its use of MongoDB aggregation pipelines for analytics.
 
-Instead of retrieving all workout records and calculating every metric on the client, dashboard-related data can be aggregated on the database side.
-
-This supports metrics including:
+Instead of retrieving all workout records and calculating every metric on the client, dashboard-related data is aggregated directly on the database side.
 
 ```text
 Weekly Adherence
@@ -379,7 +447,7 @@ Weekly Adherence
   └── Top Exercises
 ```
 
-This approach keeps analytics logic close to the data layer while allowing the frontend to focus primarily on visualization.
+This approach keeps analytics processing close to the data layer while allowing the React frontend to focus primarily on high-performance visualization.
 
 ---
 
@@ -395,9 +463,11 @@ The application makes extensive use of:
 - Empty states for situations where no workout data exists
 - Loading states and Suspense loaders
 - Network-aware loading experiences
-- Data visualizations powered by Recharts
+- Data visualizations powered by **Recharts**
 
 Empty states are deliberately used throughout the application to guide users toward meaningful next actions instead of presenting blank screens.
+
+---
 
 ## ⭐ Final Note
 
